@@ -11,10 +11,11 @@ import {
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Loader2, Plus } from 'lucide-react'
+import { BookOpen, Loader2, Plus, XCircle } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { createSummaryAction } from '@/server/actions/summaries/actions'
 import type { Article } from '@/types/articles'
+import ArticleViewDialog from './article-view-dialog'
 
 interface ArticleCardProps {
   article: Article
@@ -60,12 +61,19 @@ export function ArticleCard({ article }: ArticleCardProps) {
         </div>
 
         <div className="flex gap-2">
+          <ArticleViewDialog article={article} />
+
           <Button
             variant="outline"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? 'Cancel' : 'Add Context & Summarize'}
+            {isExpanded ? (
+              <XCircle className="h-4 w-4" />
+            ) : (
+              <BookOpen className="h-4 w-4" />
+            )}
           </Button>
         </div>
 
@@ -94,8 +102,11 @@ export function ArticleCard({ article }: ArticleCardProps) {
               disabled={!userContext.trim() || isCreating}
               size="sm"
             >
-              {isCreating && <Loader2 className="h-4 w-4 animate-spin" />}
-              <Plus className="h-4 w-4" />
+              {isCreating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Plus className="h-4 w-4" />
+              )}
               Generate Summary
             </Button>
           </div>
