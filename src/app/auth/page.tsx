@@ -24,14 +24,13 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useAction } from 'next-safe-action/hooks'
+import { loginAction, registerAction } from '@/server/actions/auth-actions'
 import {
-  loginAction,
-  registerAction,
   loginSchema,
   registerSchema,
   type LoginForm,
   type RegisterForm,
-} from './data'
+} from '@/types/auth-forms'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 

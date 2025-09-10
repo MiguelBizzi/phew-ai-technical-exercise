@@ -1,8 +1,10 @@
 'use server'
 
 import { actionClient } from '@/lib/safe-action'
-import { loginSchema, registerSchema } from './schemas'
+import { loginSchema, registerSchema } from '@/types/auth-forms'
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 
 export const loginAction = actionClient
   .inputSchema(loginSchema)
@@ -86,3 +88,15 @@ export const registerAction = actionClient
       }
     }
   })
+
+export async function logout(formData: FormData) {
+  const supabase = await createClient()
+
+  const { error } = await supabase.auth.signOut()
+  if (error) {
+    redirect('/error')
+  }
+
+  revalidatePath('/', 'layout')
+  redirect('/')
+}
