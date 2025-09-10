@@ -11,9 +11,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
-import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Separator } from '@/components/ui/separator'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -39,7 +37,6 @@ import { useRouter } from 'next/navigation'
 
 export default function Auth() {
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin')
-  const [googleLoading, setGoogleLoading] = useState(false)
   const router = useRouter()
 
   const loginForm = useForm<LoginForm>({
@@ -65,7 +62,7 @@ export default function Auth() {
       onSuccess: (data) => {
         if (data.data.success) {
           toast.success(data.data.message)
-          router.push('/dashboard')
+          router.push('/')
         } else {
           loginForm.setError('password', {
             message: data.data.message,
@@ -85,8 +82,9 @@ export default function Auth() {
     {
       onSuccess: (data) => {
         if (data.data.success) {
-          toast.success(`${data.data.message} Please sign in to continue`)
+          toast.success(data.data.message)
           setActiveTab('signin')
+          registerForm.reset()
         } else {
           registerForm.setError('password', {
             message: data.data.message,
@@ -200,7 +198,7 @@ export default function Auth() {
                       disabled={isLoginLoading}
                     >
                       {isLoginLoading && (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                       )}
                       Sign In
                     </Button>
@@ -275,7 +273,7 @@ export default function Auth() {
                       disabled={isRegisterLoading}
                     >
                       {isRegisterLoading && (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                       )}
                       Create Account
                     </Button>
@@ -283,15 +281,6 @@ export default function Auth() {
                 </Form>
               </TabsContent>
             </Tabs>
-
-            <div className="mt-6 text-center">
-              <Link
-                href="/"
-                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-              >
-                ← Back to homepage
-              </Link>
-            </div>
           </CardContent>
         </Card>
       </div>

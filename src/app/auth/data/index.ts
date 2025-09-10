@@ -1,4 +1,2 @@
-export { loginSchema, registerSchema } from './schemas'
-export type { LoginForm, RegisterForm } from './schemas'
-
-export { loginAction, registerAction } from './actions'
+export { loginAction, registerAction, logoutAction } from './actions'
+export { loginSchema, registerSchema, type LoginForm, type RegisterForm } from './schemas'

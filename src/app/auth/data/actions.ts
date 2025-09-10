@@ -2,35 +2,43 @@
 
 import { actionClient } from '@/lib/safe-action'
 import { loginSchema, registerSchema } from './schemas'
-// import { loginUser, registerUser } from '@/services/auth-service'
-// import { ApiError } from '@/lib/api'
+import { createClient } from '@/lib/supabase/server'
 
 export const loginAction = actionClient
   .inputSchema(loginSchema)
   .action(async ({ parsedInput: { email, password } }) => {
     try {
-      // const response = await loginUser({ email, password })
+      const supabase = await createClient()
 
-      return {
-        success: true,
-        // message: response.message,
-        // user: response.user,
-        // accessToken: response.accessToken,
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) {
+        return {
+          success: false,
+          message: error.message,
+        }
       }
-    } catch (error) {
-      let message = 'Ocorreu um erro ao fazer login'
 
-      // if (error instanceof ApiError) {
-      //   if (error.status === 400) {
-      //     message = error.message || 'Dados inválidos'
-      //   } else if (error.status === 500) {
-      //     message = 'Erro interno do servidor'
-      //   }
-      // }
+      if (data.user) {
+        return {
+          success: true,
+          message: 'Login successful',
+          user: data.user,
+        }
+      }
 
       return {
         success: false,
-        message,
+        message: 'Login failed',
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      return {
+        success: false,
+        message: 'An error occurred while logging in',
       }
     }
   })
@@ -39,26 +47,42 @@ export const registerAction = actionClient
   .inputSchema(registerSchema)
   .action(async ({ parsedInput: { email, password, name } }) => {
     try {
-      // const response = await registerUser({ email, password, name })
+      const supabase = await createClient()
 
-      return {
-        success: true,
-        // message: response.message,
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
+        },
+      })
+
+      if (error) {
+        return {
+          success: false,
+          message: error.message,
+        }
       }
-    } catch (error) {
-      let message = 'Erro ao criar conta'
 
-      // if (error instanceof ApiError) {
-      //   if (error.status === 400) {
-      //     message = error.message || 'Dados inválidos'
-      //   } else if (error.status === 500) {
-      //     message = 'Erro interno do servidor'
-      //   }
-      // }
+      if (data.user) {
+        return {
+          success: true,
+          message:
+            'Account created successfully. Please check your email to confirm your account.',
+        }
+      }
 
       return {
         success: false,
-        message,
+        message: 'Registration failed',
+      }
+    } catch (error) {
+      console.error('Registration error:', error)
+      return {
+        success: false,
+        message: 'An error occurred while creating your account',
       }
     }
   })
