@@ -12,6 +12,7 @@ export const ArticleSchema = z.object({
 export const ArticleSummarySchema = z.object({
   id: z.string(),
   article_id: z.string(),
+  article_title: z.string(),
   user_context: z.string(),
   summary: z.string(),
   created_at: z.string(),

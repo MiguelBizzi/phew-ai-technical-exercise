@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 export const createSummarySchema = z.object({
   articleId: z.string().min(1, 'Article ID is required'),
+  articleTitle: z.string().min(1, 'Article title is required'),
+  articleContent: z.string().min(1, 'Article content is required'),
   userContext: z
     .string()
     .min(1, 'User context is required')

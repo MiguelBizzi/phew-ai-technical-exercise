@@ -15,10 +15,17 @@ export function phewApi(path: string, init?: RequestInit) {
   })
 }
 
-export function publicApi(path: string, init?: RequestInit) {
-  const url = `${apiConfig.baseUrl}${path}`
+export function n8nApi(path: string, init?: RequestInit) {
+  const url = `${apiConfig.n8nUrl}${path}`
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'x-api-key': apiConfig.n8nApiKey,
+    ...(init?.headers as Record<string, string>),
+  }
 
   return fetch(url, {
     ...init,
+    headers,
   })
 }

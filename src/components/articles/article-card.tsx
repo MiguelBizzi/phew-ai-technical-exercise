@@ -36,7 +36,12 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
   const handleCreateSummary = () => {
     if (!userContext.trim()) return
-    createSummary({ articleId: article.id, userContext: userContext.trim() })
+    createSummary({
+      articleId: article.id,
+      articleTitle: article.title,
+      articleContent: article.content,
+      userContext: userContext.trim(),
+    })
   }
 
   const isCreating = createStatus === 'executing'
