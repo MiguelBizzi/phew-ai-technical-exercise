@@ -41,7 +41,6 @@ export const createSummaryAction = actionClient
         throw new Error(`Failed to generate summary: ${n8nResponse.statusText}`)
       }
 
-      revalidatePath('/')
       return {
         success: true,
       }
@@ -84,7 +83,7 @@ export const deleteSummaryAction = actionClient
         throw new Error(`Failed to delete summary: ${error.message}`)
       }
 
-      revalidatePath('/')
+      revalidatePath('/summaries')
       return {
         success: true,
       }

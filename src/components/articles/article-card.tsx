@@ -16,6 +16,8 @@ import { useAction } from 'next-safe-action/hooks'
 import { createSummaryAction } from '@/server/actions/summaries/actions'
 import type { Article } from '@/types/articles'
 import ArticleViewDialog from './article-view-dialog'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface ArticleCardProps {
   article: Article
@@ -24,13 +26,15 @@ interface ArticleCardProps {
 export function ArticleCard({ article }: ArticleCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [userContext, setUserContext] = useState('')
+  const router = useRouter()
 
   const { execute: createSummary, status: createStatus } = useAction(
     createSummaryAction,
     {
       onSuccess: () => {
         setUserContext('')
-        setIsExpanded(false)
+        toast.success('Summary created successfully')
+        router.push('/summaries')
       },
     },
   )
