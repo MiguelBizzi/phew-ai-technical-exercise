@@ -9,6 +9,7 @@ export const ArticleSchema = z.object({
   url: z.string().optional(),
   likesCount: z.number().default(0),
   isLikedByUser: z.boolean().default(false),
+  aiScore: z.number().min(0).max(10).default(0),
 })
 
 export const ArticleSummarySchema = z.object({

@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   Card,
   CardContent,
@@ -14,19 +13,18 @@ import { Loader2, Edit, Trash2, Save, X } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { deleteSummaryAction } from '@/server/actions/summaries/actions'
 import type { ArticleSummary } from '@/types/articles'
+import { toast } from 'sonner'
 
 interface SummaryCardProps {
   summary: ArticleSummary
 }
 
 export function SummaryCard({ summary }: SummaryCardProps) {
-  const [userContext, setUserContext] = useState(summary.user_context)
-
   const { execute: deleteSummary, status: deleteStatus } = useAction(
     deleteSummaryAction,
     {
       onSuccess: () => {
-        // The parent component will handle refreshing the list
+        toast.success('Summary deleted successfully')
       },
     },
   )

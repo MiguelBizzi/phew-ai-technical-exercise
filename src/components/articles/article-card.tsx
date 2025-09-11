@@ -18,6 +18,7 @@ import {
   XCircle,
   Heart,
   HeartIcon,
+  Star,
 } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { createSummaryAction } from '@/server/actions/summaries/actions'
@@ -87,20 +88,42 @@ export function ArticleCard({ article }: ArticleCardProps) {
     toggleLike({ articleId: article.id })
   }
 
+  const getScoreColor = (score: number) => {
+    if (score >= 8) return 'text-green-500'
+    if (score >= 6) return 'text-yellow-500'
+    if (score >= 4) return 'text-orange-500'
+    return 'text-red-500'
+  }
+
   const isCreating = createStatus === 'executing'
   const isLiking = likeStatus === 'executing'
 
   return (
     <Card className="group from-card to-card/50 w-full border-0 bg-gradient-to-br shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       <CardHeader className="pb-4">
-        <CardTitle className="text-primary group-hover:text-primary/90 text-xl font-bold transition-colors duration-200">
-          {article.title}
-        </CardTitle>
-        {article.author && (
-          <CardDescription className="text-muted-foreground/80 text-base font-medium">
-            By {article.author}
-          </CardDescription>
-        )}
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <CardTitle className="text-primary group-hover:text-primary/90 text-xl font-bold transition-colors duration-200">
+              {article.title}
+            </CardTitle>
+            {article.author && (
+              <CardDescription className="text-muted-foreground/80 text-base font-medium">
+                By {article.author}
+              </CardDescription>
+            )}
+          </div>
+
+          {article.aiScore > 0 && (
+            <div
+              className={`flex items-center gap-1 ${getScoreColor(article.aiScore)}`}
+            >
+              <Star className="h-4 w-4 fill-current" />
+              <span className="text-sm font-bold">
+                {article.aiScore.toFixed(1)}
+              </span>
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="text-foreground/70 line-clamp-3 text-base leading-relaxed">

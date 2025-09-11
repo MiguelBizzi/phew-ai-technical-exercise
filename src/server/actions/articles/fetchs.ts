@@ -24,8 +24,8 @@ export async function fetchArticles(): Promise<Article[]> {
   const data = await response.json()
   const articles = data || []
 
-  const articlesWithLikes = await Promise.all(
-    articles.map(async (article: Article) => {
+  const articlesWithLikesAndScores = await Promise.all(
+    articles.map(async (article: any) => {
       const { count: likesCount } = await supabase
         .from('article_likes')
         .select('*', { count: 'exact', head: true })
@@ -38,20 +38,29 @@ export async function fetchArticles(): Promise<Article[]> {
         .eq('user_id', user.id)
         .single()
 
+      const { data: aiScoreData } = await supabase
+        .from('article_scores')
+        .select('score')
+        .eq('article_id', article.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+
       return {
         ...article,
         likesCount: likesCount || 0,
         isLikedByUser: !!userLike,
+        aiScore: aiScoreData?.score || 0,
       }
     }),
   )
 
-  return sortArticlesByEngagement(articlesWithLikes)
+  return sortArticlesByEngagement(articlesWithLikesAndScores)
 }
 
 export function sortArticlesByEngagement(articles: Article[]): Article[] {
   return articles.sort((a, b) => {
-    // Calculate engagement score based on likes and recency
+    // Calculate engagement score based on AI score, likes, and recency
     const now = new Date()
     const aPublishedAt = a.publishedAt ? new Date(a.publishedAt) : now
     const bPublishedAt = b.publishedAt ? new Date(b.publishedAt) : now
@@ -66,9 +75,11 @@ export function sortArticlesByEngagement(articles: Article[]): Article[] {
       1 - (now.getTime() - bPublishedAt.getTime()) / (30 * 24 * 60 * 60 * 1000),
     ) // 30 days
 
-    // Engagement score: likes count + time decay bonus
-    const aScore = a.likesCount + aTimeDecay * 2 // Time decay adds up to 2 points
-    const bScore = b.likesCount + bTimeDecay * 2
+    // AI Score is the most important factor (weight: 5x)
+    // Likes count (weight: 1x)
+    // Time decay bonus (weight: 2x)
+    const aScore = a.aiScore * 5 + a.likesCount + aTimeDecay * 2
+    const bScore = b.aiScore * 5 + b.likesCount + bTimeDecay * 2
 
     // Sort by engagement score (descending)
     return bScore - aScore
