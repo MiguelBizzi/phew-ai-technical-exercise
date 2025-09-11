@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { useAction } from 'next-safe-action/hooks'
 import { loginAction, registerAction } from '@/server/actions/auth-actions'
 import {
@@ -179,9 +180,8 @@ export default function Auth() {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input
+                            <PasswordInput
                               placeholder="••••••••"
-                              type="password"
                               disabled={isLoginLoading}
                               {...field}
                             />
@@ -254,9 +254,8 @@ export default function Auth() {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input
+                            <PasswordInput
                               placeholder="••••••••"
-                              type="password"
                               disabled={isRegisterLoading}
                               {...field}
                             />
