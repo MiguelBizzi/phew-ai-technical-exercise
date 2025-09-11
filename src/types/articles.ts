@@ -7,6 +7,8 @@ export const ArticleSchema = z.object({
   author: z.string().optional(),
   publishedAt: z.string().optional(),
   url: z.string().optional(),
+  likesCount: z.number().default(0),
+  isLikedByUser: z.boolean().default(false),
 })
 
 export const ArticleSummarySchema = z.object({

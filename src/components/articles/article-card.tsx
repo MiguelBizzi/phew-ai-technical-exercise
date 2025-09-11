@@ -11,9 +11,17 @@ import {
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { BookOpen, Loader2, Plus, XCircle } from 'lucide-react'
+import {
+  BookOpen,
+  Loader2,
+  Plus,
+  XCircle,
+  Heart,
+  HeartIcon,
+} from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { createSummaryAction } from '@/server/actions/summaries/actions'
+import { toggleArticleLikeAction } from '@/server/actions/articles/like-actions'
 import type { Article } from '@/types/articles'
 import ArticleViewDialog from './article-view-dialog'
 import { toast } from 'sonner'
@@ -26,6 +34,8 @@ interface ArticleCardProps {
 export function ArticleCard({ article }: ArticleCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [userContext, setUserContext] = useState('')
+  const [localLikesCount, setLocalLikesCount] = useState(article.likesCount)
+  const [localIsLiked, setLocalIsLiked] = useState(article.isLikedByUser)
   const router = useRouter()
 
   const { execute: createSummary, status: createStatus } = useAction(
@@ -35,6 +45,24 @@ export function ArticleCard({ article }: ArticleCardProps) {
         setUserContext('')
         toast.success('Summary created successfully')
         router.push('/summaries')
+      },
+    },
+  )
+
+  const { execute: toggleLike, status: likeStatus } = useAction(
+    toggleArticleLikeAction,
+    {
+      onSuccess: (data) => {
+        if (!data?.data.success) {
+          setLocalLikesCount(article.likesCount)
+          setLocalIsLiked(article.isLikedByUser)
+          toast.error(data?.data.error || 'Failed to update like')
+        }
+      },
+      onError: (error) => {
+        setLocalLikesCount(article.likesCount)
+        setLocalIsLiked(article.isLikedByUser)
+        toast.error(error.error?.serverError || 'Failed to update like')
       },
     },
   )
@@ -49,7 +77,18 @@ export function ArticleCard({ article }: ArticleCardProps) {
     })
   }
 
+  const handleToggleLike = () => {
+    const newIsLiked = !localIsLiked
+    const newLikesCount = newIsLiked ? localLikesCount + 1 : localLikesCount - 1
+
+    setLocalIsLiked(newIsLiked)
+    setLocalLikesCount(newLikesCount)
+
+    toggleLike({ articleId: article.id })
+  }
+
   const isCreating = createStatus === 'executing'
+  const isLiking = likeStatus === 'executing'
 
   return (
     <Card className="group from-card to-card/50 w-full border-0 bg-gradient-to-br shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -68,22 +107,49 @@ export function ArticleCard({ article }: ArticleCardProps) {
           {article.content}
         </div>
 
-        <div className="flex gap-3">
-          <ArticleViewDialog article={article} />
+        <div className="flex items-center justify-between">
+          <div className="flex gap-3">
+            <ArticleViewDialog article={article} />
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="group/btn hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200 hover:shadow-md"
-          >
-            {isExpanded ? 'Cancel' : 'Add Context & Summarize'}
-            {isExpanded ? (
-              <XCircle className="h-4 w-4 transition-transform duration-200 group-hover/btn:rotate-90" />
-            ) : (
-              <BookOpen className="h-4 w-4 transition-transform duration-200 group-hover/btn:scale-110" />
-            )}
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="group/btn hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200 hover:shadow-md"
+            >
+              {isExpanded ? 'Cancel' : 'Add Context & Summarize'}
+              {isExpanded ? (
+                <XCircle className="h-4 w-4 transition-transform duration-200 group-hover/btn:rotate-90" />
+              ) : (
+                <BookOpen className="h-4 w-4 transition-transform duration-200 group-hover/btn:scale-110" />
+              )}
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleToggleLike}
+              disabled={isLiking}
+              className={`group/like flex items-center gap-2 transition-all duration-200 hover:scale-105 ${
+                localIsLiked
+                  ? 'text-red-500 hover:text-red-600'
+                  : 'text-muted-foreground hover:text-red-500'
+              }`}
+            >
+              {isLiking ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : localIsLiked ? (
+                <Heart className="h-4 w-4 fill-current" />
+              ) : (
+                <HeartIcon className="h-4 w-4" />
+              )}
+              <span className="text-sm font-medium">
+                {localLikesCount} {localLikesCount === 1 ? 'like' : 'likes'}
+              </span>
+            </Button>
+          </div>
         </div>
 
         {isExpanded && (
