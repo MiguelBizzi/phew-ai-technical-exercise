@@ -20,7 +20,7 @@ export default function ArticleViewDialog({ article }: { article: Article }) {
           View Article <ArrowRight className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,80vh)] sm:max-w-2xl [&>button:last-child]:top-3.5">
+      <DialogContent className="bg-popover flex flex-col gap-0 p-0 sm:max-h-[min(640px,80vh)] sm:max-w-2xl [&>button:last-child]:top-3.5">
         <DialogHeader className="contents space-y-0 text-left">
           <DialogTitle className="border-b px-6 py-4 text-base">
             {article.title}

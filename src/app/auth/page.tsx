@@ -1,6 +1,6 @@
 'use client'
 
-import { Video } from 'lucide-react'
+import { BookOpen, Video } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -119,15 +119,15 @@ export default function Auth() {
   const isRegisterLoading = registerStatus === 'executing'
 
   return (
-    <div className="from-primary to-primary/80 flex min-h-screen items-center justify-center bg-gradient-to-br p-4">
+    <div className="bg-primary flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md">
         <Card>
           <CardHeader className="text-center">
             <div className="mb-8 flex items-center justify-center gap-2">
               <div className="from-primary to-secondary rounded-lg bg-linear-to-br p-2">
-                <Video className="h-6 w-6 text-white" />
+                <BookOpen className="h-6 w-6 text-white" />
               </div>
-              <span className="text-2xl font-bold">TranscribeX</span>
+              <span className="text-2xl font-bold">Article Summarizer</span>
             </div>
             <CardTitle>Welcome</CardTitle>
             <CardDescription>

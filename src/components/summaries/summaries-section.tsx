@@ -8,6 +8,9 @@ import {
 import { SummaryCard } from '@/components/summaries/summary-card'
 import { fetchSummaries } from '@/server/actions/summaries/fetchs'
 import { SummarySectionError } from './summary-section-error'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 
 export async function SummariesSection() {
   try {
@@ -15,12 +18,23 @@ export async function SummariesSection() {
 
     return (
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Your Summaries</CardTitle>
-            <CardDescription>
-              View, edit, or delete your generated summaries
-            </CardDescription>
+        <Card className="from-card to-card/80 border-0 bg-gradient-to-br shadow-xl backdrop-blur-sm">
+          <CardHeader className="flex items-center justify-between">
+            <div className="space-y-2">
+              <CardTitle className="text-primary text-2xl font-bold">
+                Your Summaries
+              </CardTitle>
+              <CardDescription className="text-muted-foreground/80 text-lg">
+                View or delete your generated summaries
+              </CardDescription>
+            </div>
+
+            <Link href="/">
+              <Button size="sm">
+                See articles
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </CardHeader>
         </Card>
 

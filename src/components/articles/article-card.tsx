@@ -52,66 +52,76 @@ export function ArticleCard({ article }: ArticleCardProps) {
   const isCreating = createStatus === 'executing'
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-lg">{article.title}</CardTitle>
+    <Card className="group from-card to-card/50 w-full border-0 bg-gradient-to-br shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-primary group-hover:text-primary/90 text-xl font-bold transition-colors duration-200">
+          {article.title}
+        </CardTitle>
         {article.author && (
-          <CardDescription>By {article.author}</CardDescription>
+          <CardDescription className="text-muted-foreground/80 text-base font-medium">
+            By {article.author}
+          </CardDescription>
         )}
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="line-clamp-3 text-sm text-gray-600">
+      <CardContent className="space-y-6">
+        <div className="text-foreground/70 line-clamp-3 text-base leading-relaxed">
           {article.content}
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <ArticleViewDialog article={article} />
 
           <Button
             variant="outline"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
+            className="group/btn hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200 hover:shadow-md"
           >
             {isExpanded ? 'Cancel' : 'Add Context & Summarize'}
             {isExpanded ? (
-              <XCircle className="h-4 w-4" />
+              <XCircle className="h-4 w-4 transition-transform duration-200 group-hover/btn:rotate-90" />
             ) : (
-              <BookOpen className="h-4 w-4" />
+              <BookOpen className="h-4 w-4 transition-transform duration-200 group-hover/btn:scale-110" />
             )}
           </Button>
         </div>
 
         {isExpanded && (
-          <div className="space-y-3 border-t pt-4">
-            <div>
-              <Label htmlFor={`context-${article.id}`}>
+          <div className="border-border/50 animate-in slide-in-from-top-2 space-y-6 border-t pt-6 duration-300">
+            <div className="space-y-3">
+              <Label
+                htmlFor={`context-${article.id}`}
+                className="text-primary text-base font-semibold"
+              >
                 Add your context (max 500 characters)
               </Label>
               <Textarea
                 id={`context-${article.id}`}
-                className="mt-2"
+                className="border-border/50 bg-secondary/30 focus:bg-secondary/50 min-h-[120px] resize-none rounded-xl transition-colors duration-200"
                 placeholder="Add your thoughts, questions, or specific focus areas..."
                 value={userContext}
                 onChange={(e) => setUserContext(e.target.value)}
                 maxLength={500}
-                rows={3}
+                rows={4}
               />
-              <div className="mt-1 text-xs text-gray-500">
-                {userContext.length}/500 characters
+              <div className="text-muted-foreground/70 flex justify-between text-sm">
+                <span>Share your insights to get a personalized summary</span>
+                <span className="font-medium">{userContext.length}/500</span>
               </div>
             </div>
 
             <Button
               onClick={handleCreateSummary}
               disabled={!userContext.trim() || isCreating}
-              size="sm"
+              size="lg"
+              className="from-coral to-coral/90 hover:from-coral/90 hover:to-coral w-full bg-gradient-to-r shadow-lg transition-all duration-200 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isCreating ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
-                <Plus className="h-4 w-4" />
+                <Plus className="h-5 w-5" />
               )}
-              Generate Summary
+              {isCreating ? 'Generating Summary...' : 'Generate Summary'}
             </Button>
           </div>
         )}
