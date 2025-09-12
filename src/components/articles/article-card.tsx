@@ -1,13 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -19,6 +13,8 @@ import {
   Heart,
   HeartIcon,
   Star,
+  Calendar,
+  ExternalLink,
 } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { createSummaryAction } from '@/server/actions/summaries/actions'
@@ -27,6 +23,7 @@ import type { Article } from '@/types/articles'
 import ArticleViewDialog from './article-view-dialog'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { formatDate } from '@/utils/format-date'
 
 interface ArticleCardProps {
   article: Article
@@ -97,20 +94,20 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
   const isCreating = createStatus === 'executing'
   const isLiking = likeStatus === 'executing'
+  const publishedDate = formatDate(article.datetime)
 
   return (
-    <Card className="group from-card to-card/50 w-full border-0 bg-gradient-to-br shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <CardHeader className="pb-4">
+    <Card className="group from-card to-card/50 w-full overflow-hidden border-0 bg-gradient-to-br shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <CardHeader className="pb-0">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-primary group-hover:text-primary/90 text-xl font-bold transition-colors duration-200">
+            <CardTitle className="text-primary group-hover:text-primary/90 line-clamp-2 text-xl font-bold transition-colors duration-200">
               {article.title}
             </CardTitle>
-            {article.author && (
-              <CardDescription className="text-muted-foreground/80 text-base font-medium">
-                By {article.author}
-              </CardDescription>
-            )}
+            <div className="text-muted-foreground/70 mt-1 flex items-center gap-1 text-sm">
+              <Calendar className="h-3 w-3" />
+              <span>{publishedDate}</span>
+            </div>
           </div>
 
           {article.aiScore > 0 && (
@@ -150,6 +147,25 @@ export function ArticleCard({ article }: ArticleCardProps) {
           </div>
 
           <div className="flex items-center gap-2">
+            {article.url && (
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className="text-muted-foreground hover:text-primary transition-colors duration-200"
+              >
+                <a
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  <span className="text-xs">Source</span>
+                </a>
+              </Button>
+            )}
+
             <Button
               variant="ghost"
               size="sm"

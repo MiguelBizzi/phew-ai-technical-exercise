@@ -25,7 +25,7 @@ export async function fetchArticles(): Promise<Article[]> {
   const articles = data || []
 
   const articlesWithLikesAndScores = await Promise.all(
-    articles.map(async (article: any) => {
+    articles.map(async (article: Article) => {
       const { count: likesCount } = await supabase
         .from('article_likes')
         .select('*', { count: 'exact', head: true })
@@ -62,8 +62,8 @@ export function sortArticlesByEngagement(articles: Article[]): Article[] {
   return articles.sort((a, b) => {
     // Calculate engagement score based on AI score, likes, and recency
     const now = new Date()
-    const aPublishedAt = a.publishedAt ? new Date(a.publishedAt) : now
-    const bPublishedAt = b.publishedAt ? new Date(b.publishedAt) : now
+    const aPublishedAt = a.datetime ? new Date(a.datetime) : now
+    const bPublishedAt = b.datetime ? new Date(b.datetime) : now
 
     // Time decay factor (newer articles get higher score)
     const aTimeDecay = Math.max(
