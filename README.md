@@ -15,8 +15,6 @@ You can find a sample screenshot of the Article Summarizer app below:
 
 ![Ai Score flow](public/app-screenshot.png)
 
-> To view or update the screenshot, replace `public/app-screenshot.png` in the repository.
-
 ## 🚀 Quick Start
 
 ### Prerequisites
